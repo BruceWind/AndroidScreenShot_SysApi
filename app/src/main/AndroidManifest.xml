@@ -16,7 +16,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.androidyuan.screenshot.ScreenShotActivity"
+        <activity android:name="com.androidyuan.lib.screenshot.ScreenShotActivity"
                   android:theme="@android:style/Theme.Dialog" />
 
     </application>

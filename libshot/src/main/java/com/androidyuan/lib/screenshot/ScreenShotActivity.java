@@ -1,4 +1,4 @@
-package com.androidyuan.screenshot;
+package com.androidyuan.lib.screenshot;
 
 
 import android.app.Activity;
@@ -8,7 +8,6 @@ import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 /**

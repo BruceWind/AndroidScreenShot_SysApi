@@ -1,4 +1,4 @@
-package com.androidyuan.screenshot;
+package com.androidyuan.lib.screenshot;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
