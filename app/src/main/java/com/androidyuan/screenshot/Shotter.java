@@ -86,11 +86,7 @@ public class Shotter {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-            if (mMediaProjection != null) {
-                virtualDisplay();
-            } else {
-                virtualDisplay();
-            }
+            virtualDisplay();
 
             Handler handler = new Handler();
 
@@ -100,8 +96,7 @@ public class Shotter {
 
                                         Image image = mImageReader.acquireLatestImage();
 
-                                        SaveTask task = new SaveTask();
-                                        AsyncTaskCompat.executeParallel(task, image);
+                                        AsyncTaskCompat.executeParallel(new SaveTask(), image);
                                     }
                                 },
                     300);
@@ -217,6 +212,7 @@ public class Shotter {
     }
 
 
+    // a  call back listener
     public interface OnShotListener {
         void onFinish();
     }

@@ -40,6 +40,14 @@ public class ScreenShotActivity extends Activity {
                     REQUEST_MEDIA_PROJECTION
             );
         }
+        else
+        {
+            toast("版本过低,无法截屏");
+        }
+    }
+
+    private void toast(String str) {
+        Toast.makeText(ScreenShotActivity.this,str,Toast.LENGTH_LONG).show();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -51,7 +59,7 @@ public class ScreenShotActivity extends Activity {
                     shotter.startScreenShot(new Shotter.OnShotListener() {
                         @Override
                         public void onFinish() {
-                            Toast.makeText(ScreenShotActivity.this,"shot finish",Toast.LENGTH_LONG).show();
+                            toast("shot finish!");
                         }
                     });
                 }
