@@ -12,9 +12,12 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    lintOptions {
+        abortOnError false
     }
 }
 
@@ -23,3 +26,21 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:25.0.1'
 }
+
+
+
+//task to delete the old jar
+task deleteOldJar(type: Delete) {
+    delete 'release/screenshot.jar'
+}
+
+//task to export contents as jar
+task exportJar(type: Copy) {
+    from('build/intermediates/bundles/release/')
+    into('release/')
+    include('classes.jar')
+    ///Rename the jar
+    rename('classes.jar', 'screenshot.jar')
+}
+
+exportJar.dependsOn(deleteOldJar, build)
