@@ -15,7 +15,7 @@
 > 这个activity是透明的，而且不会引起当前activity onPuase，
 ScreenShotActivity并自动实现弹出用户提示并截屏保存到外置存储空间下
 
-    注意：这个app使用外部存储并没有在mainfast中生明权限也没有在activity中动态申请。
+    注意：这个app使用外部存储，并不需要在mainfast中生明权限也没有在activity中动态申请，所以不要惊讶，不会崩溃的。
     
 2. 自定义使用
 
