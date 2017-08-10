@@ -55,7 +55,7 @@ public class Shotter {
             mImageReader = ImageReader.newInstance(
                     getScreenWidth(),
                     getScreenHeight(),
-                    PixelFormat.RGB_565,// a pixel两节省一些内存 个2个字节 此处RGB_565 必须和下面 buffer处理一致的格式
+                    PixelFormat.RGBA_8888,//此处必须和下面 buffer处理一致的格式 ，RGB_565在一些机器上出现兼容问题。
                     1);
         }
     }
@@ -129,7 +129,7 @@ public class Shotter {
             int rowStride = planes[0].getRowStride();
             int rowPadding = rowStride - pixelStride * width;
             Bitmap bitmap = Bitmap.createBitmap(width + rowPadding / pixelStride, height,
-                    Bitmap.Config.RGB_565);
+                    Bitmap.Config.ARGB_8888);//虽然这个色彩比较费内存但是 兼容性更好
             bitmap.copyPixelsFromBuffer(buffer);
             bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
             image.close();
