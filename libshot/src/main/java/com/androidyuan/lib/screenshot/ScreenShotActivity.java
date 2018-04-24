@@ -14,7 +14,6 @@ import android.widget.Toast;
  * Created by wei on 16-9-18.
  * <p>
  * 完全透明 只是用于弹出权限申请的窗而已
- *
  */
 public class ScreenShotActivity extends Activity {
 
@@ -38,19 +37,19 @@ public class ScreenShotActivity extends Activity {
 
     public void requestScreenShot() {
         if (Build.VERSION.SDK_INT >= 21) {
-            startActivityForResult(
-                    ((MediaProjectionManager) getSystemService("media_projection")).createScreenCaptureIntent(),
-                    REQUEST_MEDIA_PROJECTION
-            );
-        }
-        else
-        {
+            startActivityForResult(createScreenCaptureIntent(), REQUEST_MEDIA_PROJECTION);
+        } else {
             toast("版本过低,无法截屏");
         }
     }
 
+    private Intent createScreenCaptureIntent() {
+        //这里用media_projection代替Context.MEDIA_PROJECTION_SERVICE 是防止低于21 api编译不过
+        return ((MediaProjectionManager) getSystemService("media_projection")).createScreenCaptureIntent();
+    }
+
     private void toast(String str) {
-        Toast.makeText(ScreenShotActivity.this,str,Toast.LENGTH_LONG).show();
+        Toast.makeText(ScreenShotActivity.this, str, Toast.LENGTH_LONG).show();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -58,7 +57,7 @@ public class ScreenShotActivity extends Activity {
         switch (requestCode) {
             case REQUEST_MEDIA_PROJECTION: {
                 if (resultCode == -1 && data != null) {
-                    Shotter shotter=new Shotter(ScreenShotActivity.this,data);
+                    Shotter shotter = new Shotter(ScreenShotActivity.this, resultCode, data);
                     shotter.startScreenShot(new Shotter.OnShotListener() {
                         @Override
                         public void onFinish() {

@@ -19,6 +19,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.os.AsyncTaskCompat;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,14 +44,14 @@ public class Shotter {
     private OnShotListener mOnShotListener;
 
 
-    public Shotter(Context context, Intent data) {
+
+    public Shotter(Context context,int reqCode, Intent data) {
         this.mRefContext = new SoftReference<>(context);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
 
-            mMediaProjection = getMediaProjectionManager().getMediaProjection(Activity.RESULT_OK,
-                    data);
+            mMediaProjection = getMediaProjectionManager().getMediaProjection(reqCode,data);
 
             mImageReader = ImageReader.newInstance(
                     getScreenWidth(),
@@ -99,8 +100,8 @@ public class Shotter {
                                         AsyncTaskCompat.executeParallel(new SaveTask(), image);
                                     }
                                 },
-                    300);
-
+                    800);
+        //这里delay 时间过短容易导致 系统权限弹窗的阴影还没消失就完成了截图。 @see<a href="https://github.com/weizongwei5/AndroidScreenShot_SysApi/issues/4">issues</a>
         }
 
     }
@@ -151,7 +152,7 @@ public class Shotter {
                     }
                     FileOutputStream out = new FileOutputStream(fileImage);
                     if (out != null) {
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
                         out.flush();
                         out.close();
                     }
@@ -185,6 +186,7 @@ public class Shotter {
             }
 
             if (mOnShotListener != null) {
+                Log.d("Shotter path:",mLocalUrl+"");
                 mOnShotListener.onFinish();
             }
 
