@@ -1,7 +1,6 @@
 package com.androidyuan.lib.screenshot;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -44,14 +43,13 @@ public class Shotter {
     private OnShotListener mOnShotListener;
 
 
-
-    public Shotter(Context context,int reqCode, Intent data) {
+    public Shotter(Context context, int reqCode, Intent data) {
         this.mRefContext = new SoftReference<>(context);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
 
-            mMediaProjection = getMediaProjectionManager().getMediaProjection(reqCode,data);
+            mMediaProjection = getMediaProjectionManager().getMediaProjection(reqCode, data);
 
             mImageReader = ImageReader.newInstance(
                     getScreenWidth(),
@@ -101,7 +99,7 @@ public class Shotter {
                                     }
                                 },
                     800);
-        //这里delay 时间过短容易导致 系统权限弹窗的阴影还没消失就完成了截图。 @see<a href="https://github.com/weizongwei5/AndroidScreenShot_SysApi/issues/4">issues</a>
+            //这里delay 时间过短容易导致 系统权限弹窗的阴影还没消失就完成了截图。 @see<a href="https://github.com/weizongwei5/AndroidScreenShot_SysApi/issues/4">issues</a>
         }
 
     }
@@ -186,7 +184,7 @@ public class Shotter {
             }
 
             if (mOnShotListener != null) {
-                Log.d("Shotter path:",mLocalUrl+"");
+                Log.d("Shotter path:", mLocalUrl + "");
                 mOnShotListener.onFinish();
             }
 

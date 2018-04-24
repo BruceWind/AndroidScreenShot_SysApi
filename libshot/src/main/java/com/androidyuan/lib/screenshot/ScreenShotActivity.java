@@ -14,6 +14,8 @@ import android.widget.Toast;
  * Created by wei on 16-9-18.
  * <p>
  * 完全透明 只是用于弹出权限申请的窗而已
+ *
+ * 这个类的用于service需要在manifest中配置 intent-filter action
  */
 public class ScreenShotActivity extends Activity {
 
@@ -56,7 +58,7 @@ public class ScreenShotActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_MEDIA_PROJECTION: {
-                if (resultCode == -1 && data != null) {
+                if (resultCode == RESULT_OK && data != null) {
                     Shotter shotter = new Shotter(ScreenShotActivity.this, resultCode, data);
                     shotter.startScreenShot(new Shotter.OnShotListener() {
                         @Override
@@ -65,6 +67,10 @@ public class ScreenShotActivity extends Activity {
                             finish(); // don't forget finish activity
                         }
                     });
+                } else if (resultCode == RESULT_CANCELED) {
+                    toast("shot cancel , please give permission.");
+                } else {
+                    toast("unknow exceptions!");
                 }
             }
         }

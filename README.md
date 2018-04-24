@@ -18,5 +18,10 @@ ScreenShotActivity并自动实现弹出用户提示并截屏保存到外置存�
     注意：这个app使用外部存储，并不需要在mainfast中生明权限也没有在activity中动态申请，所以不要惊讶，不会崩溃的。
     
 2. 自定义使用
-
-    直接使用Shotter，使用方法参考ScreenShotActivity。
+   
+    直接使用Shotter，或者直接使用ScreenShotActivity。
+    
+   2.1 更多拓展：
+   截图桌面：ScreenShotActivity我试过可以截图桌面，因为他是一个透明并隐藏的activity。
+   对其他app进行截图:也可以，你自己可以试着玩一下。
+   从service里启动:你要改manifaest，配置action，从service里启动试试，这个我没有玩过。
