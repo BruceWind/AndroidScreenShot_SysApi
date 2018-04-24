@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.androidyuan.androidscreenshot_sysapi">
+    package="com.androidyuan.androidscreenshot_sysapi">
 
     <application
         android:allowBackup="true"
@@ -10,14 +10,24 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="com.androidyuan.lib.screenshot.ScreenShotActivity"
-                  android:theme="@android:style/Theme.Dialog" />
+        <activity
+            android:name="com.androidyuan.lib.screenshot.ScreenShotActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Dialog">
+            <intent-filter>
+                <action android:name="androidyuan.shotter"></action>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <service android:name=".ScreenShotService">
+
+        </service>
 
     </application>
 

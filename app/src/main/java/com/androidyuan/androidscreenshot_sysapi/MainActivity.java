@@ -18,6 +18,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickShot(View view)
     {
+        //1.直接启动
         startActivity(new Intent(this, ScreenShotActivity.class));
+        //2.通过service启动
+//        startService(new Intent(this, ScreenShotService.class));
     }
 }

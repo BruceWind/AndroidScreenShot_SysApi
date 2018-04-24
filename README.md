@@ -26,4 +26,4 @@
    
    3.2对其他app进行截图:你自己试着调整shotter的delay时间为3秒，然后start截图，再切换到其他app里，等toast截图成功。
    
-   3.3从service里启动:你要改manifaest，配置action，从service里启动试试，这个我没有玩过。
+   3.3从service里启动:你要改manifaest，配置action，从service里启动试试，代码里有。
