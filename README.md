@@ -21,7 +21,12 @@ ScreenShotActivity并自动实现弹出用户提示并截屏保存到外置存�
    
     直接使用Shotter，或者直接使用ScreenShotActivity。
     
-   2.1 更多拓展：
-   截图桌面：ScreenShotActivity我试过可以截图桌面，因为他是一个透明并隐藏的activity。
-   对其他app进行截图:也可以，你自己可以试着玩一下。
-   从service里启动:你要改manifaest，配置action，从service里启动试试，这个我没有玩过。
+3. 更多拓展：
+   
+   > 因为他是一个透明并隐藏的activity，玩法有很多:
+    
+   3.1截图桌面;
+   
+   3.2对其他app进行截图:你自己试着调整shotter的delay时间为3秒，然后start截图，再切换到其他app里，等toast截图成功。
+   
+   3.3从service里启动:你要改manifaest，配置action，从service里启动试试，这个我没有玩过。
