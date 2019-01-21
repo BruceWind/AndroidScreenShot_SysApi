@@ -10,17 +10,24 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.androidyuan.androidscreenshot_sysapi.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="please click the button,and save path in log." android:id="@+id/textView"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onClickShot"
-        android:text="start shot"
+        android:text="use activity"
         android:layout_below="@+id/textView"
-        android:layout_alignParentLeft="true" android:layout_alignParentStart="true"/>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_marginTop="80dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onClickShotFromService"
+        android:text="use service"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 
 </RelativeLayout>

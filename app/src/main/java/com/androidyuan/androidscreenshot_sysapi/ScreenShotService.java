@@ -24,13 +24,14 @@ public class ScreenShotService extends Service {
             @Override
             public void run() {
 
+                //这里启动新的透明的activity后 上个页面的dialog 键盘可能会因为页面pause而隐藏.
                 Intent i = new Intent("androidyuan.shotter");
                 // 这个不是必需的
                 i.addCategory(Intent.CATEGORY_DEFAULT);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
             }
-        }, 3200);//这里留足够的时间切换到别的app
+        }, 4200);//这里留足够的时间切换到别的app
     }
 
     @Nullable

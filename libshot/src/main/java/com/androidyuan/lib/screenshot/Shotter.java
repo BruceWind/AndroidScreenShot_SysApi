@@ -182,6 +182,11 @@ public class Shotter {
             if (mVirtualDisplay != null) {
                 mVirtualDisplay.release();
             }
+            if (mMediaProjection != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mMediaProjection.stop();
+                }
+            }
 
             if (mOnShotListener != null) {
                 Log.d("Shotter path:", mLocalUrl + "");
