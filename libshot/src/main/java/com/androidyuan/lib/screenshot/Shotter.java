@@ -14,11 +14,15 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.v4.os.AsyncTaskCompat;
+//import android.support.v4.os.AsyncTaskCompat;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,6 +45,8 @@ public class Shotter {
     private String mLocalUrl = "";
 
     private OnShotListener mOnShotListener;
+    int mHeight;
+    int mWidth;
 
 
     public Shotter(Context context, int reqCode, Intent data) {
@@ -51,9 +57,16 @@ public class Shotter {
 
             mMediaProjection = getMediaProjectionManager().getMediaProjection(reqCode, data);
 
+            WindowManager window = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            Display mDisplay = window.getDefaultDisplay();
+            DisplayMetrics metrics = new DisplayMetrics();
+            mDisplay.getRealMetrics(metrics);
+            mWidth = metrics.widthPixels;//size.x;
+            mHeight = metrics.heightPixels;//size.y;
+
             mImageReader = ImageReader.newInstance(
-                    getScreenWidth(),
-                    getScreenHeight(),
+                    mWidth,
+                    mHeight,
                     PixelFormat.RGBA_8888,//此处必须和下面 buffer处理一致的格式 ，RGB_565在一些机器上出现兼容问题。
                     1);
         }
@@ -64,8 +77,8 @@ public class Shotter {
     private void virtualDisplay() {
 
         mVirtualDisplay = mMediaProjection.createVirtualDisplay("screen-mirror",
-                getScreenWidth(),
-                getScreenHeight(),
+                mWidth,
+                mHeight,
                 Resources.getSystem().getDisplayMetrics().densityDpi,
                 DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
                 mImageReader.getSurface(), null, null);
@@ -92,10 +105,8 @@ public class Shotter {
             handler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-
                                         Image image = mImageReader.acquireLatestImage();
-
-                                        AsyncTaskCompat.executeParallel(new SaveTask(), image);
+                                        new SaveTask().doInBackground(image);
                                     }
                                 },
                     800);
@@ -110,9 +121,7 @@ public class Shotter {
         @TargetApi(Build.VERSION_CODES.KITKAT)
         @Override
         protected Bitmap doInBackground(Image... params) {
-
             if (params == null || params.length < 1 || params[0] == null) {
-
                 return null;
             }
 
@@ -197,6 +206,7 @@ public class Shotter {
     }
 
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private MediaProjectionManager getMediaProjectionManager() {
 
         return (MediaProjectionManager) getContext().getSystemService(
