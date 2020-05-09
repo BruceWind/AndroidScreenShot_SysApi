@@ -172,18 +172,7 @@ public class Shotter {
                     fileImage = null;
                 }
             }
-
-            if (fileImage != null) {
-                return bitmap;
-            }
-            return null;
-        }
-
-        @TargetApi(Build.VERSION_CODES.KITKAT)
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
-
+            
             if (bitmap != null && !bitmap.isRecycled()) {
                 bitmap.recycle();
             }
@@ -200,8 +189,21 @@ public class Shotter {
             if (mOnShotListener != null) {
                 Log.d("Shotter path:", mLocalUrl + "");
                 mOnShotListener.onFinish();
+            } else {
+                Log.d("Shotter:", "noShotListener");
             }
+            
+            if (fileImage != null) {
+                return bitmap;
+            }
+            return null;
+        }
 
+        @TargetApi(Build.VERSION_CODES.KITKAT)
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            Log.d("Shotter:", "check onPostExecute");
+            super.onPostExecute(bitmap);
         }
     }
 
