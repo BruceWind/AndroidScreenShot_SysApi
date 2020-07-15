@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'//添加
 
 android {
     compileSdkVersion 25
@@ -17,7 +18,8 @@ android {
         }
     }
     lintOptions {
-        abortOnError false
+        abortOnError false // Even if there is an error, it will not stop packaging
+ 	checkReleaseBuilds false // Lint detection is not performed when the Release version is packaged
     }
 }
 
@@ -44,3 +46,47 @@ task exportJar(type: Copy) {
 }
 
 exportJar.dependsOn(deleteOldJar, build)
+
+
+
+//publish task
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+task copyDoc(type: Copy) {
+    from "${buildDir}/docs/"
+    into "docs"
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+//解决中文注释生成失败的问题 work out chinese comment build error
+tasks.withType(Javadoc) {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
+    options.addStringOption('charSet', 'UTF-8')
+}
+
+
+//publish to Bintray
+publish {
+
+    userOrg = 'androidyuan'           //my username in bintray.com
+    groupId = 'brucewind.github.io'   //follow package name
+    artifactId = 'ScreenShotWithSysApi'       //Package name in bintray.com
+    publishVersion = '0.1.0-beta'        
+    desc = 'release 0.1.0-beta'
+    website = 'https://github.com/BruceWind/AndroidScreenShot_SysApi'
+}
+
