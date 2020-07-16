@@ -7,8 +7,14 @@
     
     
  2. 打破老旧的截屏方案，只能截当前activity不能截状态栏的问题。
+
+## 直接引用
+gradle依赖。
+```
+implementation 'brucewind.github.io:ScreenShotWithSysApi:0.1.0-beta'
+```
  
-## 使用
+## 编译使用
 
 1. 直接编译代码run，等待toast成功.
 

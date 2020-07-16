@@ -110,7 +110,7 @@ public class Shotter {
                                     }
                                 },
                     800);
-            //这里delay 时间过短容易导致 系统权限弹窗的阴影还没消失就完成了截图。 @see<a href="https://github.com/weizongwei5/AndroidScreenShot_SysApi/issues/4">issues</a>
+            //这里delay 时间过短容易导致 系统权限弹窗的阴影还没消失就完成了截图。 @see<a href="https://github.com/BruceWind/AndroidScreenShot_SysApi/issues/4">issues</a>
         }
 
     }
