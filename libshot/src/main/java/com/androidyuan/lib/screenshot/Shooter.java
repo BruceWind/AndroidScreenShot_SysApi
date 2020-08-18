@@ -14,13 +14,10 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
-//import android.support.v4.os.AsyncTaskCompat;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -33,8 +30,13 @@ import java.nio.ByteBuffer;
 
 /**
  * Created by wei on 16-12-1.
+ * <p>
+ * Remind:
+ * Run this class after you got record permission.
  */
-public class Shotter {
+public class Shooter {
+
+    public static boolean hasPermission;
 
     private final SoftReference<Context> mRefContext;
     private ImageReader mImageReader;
@@ -45,15 +47,23 @@ public class Shotter {
     private String mLocalUrl = "";
 
     private OnShotListener mOnShotListener;
-    int mHeight;
-    int mWidth;
+    private int mHeight;
+    private int mWidth;
+
+    //using a default path.
+    private String getSavedPath() {
+        if (TextUtils.isEmpty(mLocalUrl)) {
+            mLocalUrl = getContext().getExternalFilesDir("screenshot").getAbsoluteFile() + "/"
+                    + SystemClock.currentThreadTimeMillis() + ".png";
+        }
+        return mLocalUrl;
+    }
 
 
-    public Shotter(Context context, int reqCode, Intent data) {
+    public Shooter(Context context, int reqCode, Intent data) {
         this.mRefContext = new SoftReference<>(context);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
 
             mMediaProjection = getMediaProjectionManager().getMediaProjection(reqCode, data);
 
@@ -67,7 +77,7 @@ public class Shotter {
             mImageReader = ImageReader.newInstance(
                     mWidth,
                     mHeight,
-                    PixelFormat.RGBA_8888,//此处必须和下面 buffer处理一致的格式 ，RGB_565在一些机器上出现兼容问题。
+                    PixelFormat.RGBA_8888,//this is necessary to equal buffer format in #copyPixelsFromBuffer.
                     1);
         }
     }
@@ -76,32 +86,39 @@ public class Shotter {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void virtualDisplay() {
 
-        mVirtualDisplay = mMediaProjection.createVirtualDisplay("screen-mirror",
+        mVirtualDisplay = mMediaProjection.createVirtualDisplay(
+                "screen-mirror",
                 mWidth,
                 mHeight,
                 Resources.getSystem().getDisplayMetrics().densityDpi,
                 DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
-                mImageReader.getSurface(), null, null);
+                mImageReader.getSurface(), null, null
+        );
 
     }
 
-    public void startScreenShot(OnShotListener onShotListener, String loc_url) {
-        mLocalUrl = loc_url;
+    /**
+     * @param onShotListener
+     * @param savedPath
+     */
+    public void startScreenShot(String savedPath, OnShotListener onShotListener) {
+        mLocalUrl = savedPath;
         startScreenShot(onShotListener);
     }
 
 
+    /**
+     * This method will using {@link #getSavedPath} to save.
+     * @param onShotListener
+     */
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public void startScreenShot(OnShotListener onShotListener) {
-
+        hasPermission = true;
         mOnShotListener = onShotListener;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
             virtualDisplay();
-
             Handler handler = new Handler();
-
             handler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -110,7 +127,8 @@ public class Shotter {
                                     }
                                 },
                     800);
-            //这里delay 时间过短容易导致 系统权限弹窗的阴影还没消失就完成了截图。 @see<a href="https://github.com/weizongwei5/AndroidScreenShot_SysApi/issues/4">issues</a>
+            //this is a delay due to that record screen permission dialog has not dismissed on some devices cause take dialog graphic in screenshot
+            //.@see<a href="https://github.com/weizongwei5/AndroidScreenShot_SysApi/issues/4">issues</a>
         }
 
     }
@@ -137,22 +155,14 @@ public class Shotter {
             int rowStride = planes[0].getRowStride();
             int rowPadding = rowStride - pixelStride * width;
             Bitmap bitmap = Bitmap.createBitmap(width + rowPadding / pixelStride, height,
-                    Bitmap.Config.ARGB_8888);//虽然这个色彩比较费内存但是 兼容性更好
+                    Bitmap.Config.ARGB_8888);//even though ARGB8888 will consume more memory,it has better compatibility on device.
             bitmap.copyPixelsFromBuffer(buffer);
             bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
             image.close();
             File fileImage = null;
             if (bitmap != null) {
                 try {
-
-                    if (TextUtils.isEmpty(mLocalUrl)) {
-                        mLocalUrl = getContext().getExternalFilesDir("screenshot").getAbsoluteFile()
-                                +
-                                "/"
-                                +
-                                SystemClock.currentThreadTimeMillis() + ".png";
-                    }
-                    fileImage = new File(mLocalUrl);
+                    fileImage = new File(getSavedPath());
 
                     if (!fileImage.exists()) {
                         fileImage.createNewFile();
@@ -166,13 +176,18 @@ public class Shotter {
 
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
-                    fileImage = null;
+                    if (mOnShotListener != null) mOnShotListener.onError();
+                    release();
+                    return null;
                 } catch (IOException e) {
                     e.printStackTrace();
-                    fileImage = null;
+                    if (mOnShotListener != null) mOnShotListener.onError();
+
+                    release();
+                    return null;
                 }
             }
-            
+
             if (bitmap != null && !bitmap.isRecycled()) {
                 bitmap.recycle();
             }
@@ -187,23 +202,29 @@ public class Shotter {
             }
 
             if (mOnShotListener != null) {
-                Log.d("Shotter path:", mLocalUrl + "");
-                mOnShotListener.onFinish();
-            } else {
-                Log.d("Shotter:", "noShotListener");
+                mOnShotListener.onFinish(getSavedPath());
             }
-            
-            if (fileImage != null) {
-                return bitmap;
-            }
+
             return null;
         }
 
         @TargetApi(Build.VERSION_CODES.KITKAT)
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            Log.d("Shotter:", "check onPostExecute");
             super.onPostExecute(bitmap);
+        }
+    }
+
+    public void release(){
+        if (mVirtualDisplay != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                mVirtualDisplay.release();
+            }
+        }
+        if (mMediaProjection != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mMediaProjection.stop();
+            }
         }
     }
 
@@ -219,18 +240,8 @@ public class Shotter {
         return mRefContext.get();
     }
 
-
-    private int getScreenWidth() {
-        return Resources.getSystem().getDisplayMetrics().widthPixels;
-    }
-
-    private int getScreenHeight() {
-        return Resources.getSystem().getDisplayMetrics().heightPixels;
-    }
-
-
-    // a  call back listener
     public interface OnShotListener {
-        void onFinish();
+        void onFinish(String path);
+        void onError();
     }
 }
