@@ -1,3 +1,6 @@
+# if gitlab action running occur a error such as 'No toolchains found in the NDK toolchains folder
+# for ABI with prefix: mips64el-linux-android', might you need to change 'distributionUrl' of gradle zip and 'classpath'.
+
 name: Build & Publish Debug APK
 
 on:
@@ -20,10 +23,10 @@ jobs:
       run: ./gradlew build
     - name: Build Debug APK
       run: ./gradlew assembleDebug
-    - name: Releasing using Hub
-      uses: ShaunLWM/action-release-debugapk@master
-      env:
-       GITHUB_TOKEN: ${{ secrets.TOKEN }}
-       APP_FOLDER: app
-       RELEASE_TITLE: New Build
+#    - name: Releasing using Hub
+#      uses: ShaunLWM/action-release-debugapk@master  # this value is not any user,it is a pedestal,
+#      env:
+#       GITHUB_TOKEN: ${{ secrets.TOKEN }}
+#       APP_FOLDER: app
+#       RELEASE_TITLE: New Build
 
