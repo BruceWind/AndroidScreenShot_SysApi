@@ -21,7 +21,7 @@ jobs:
     - name: Build Debug APK
       run: ./gradlew assembleDebug
     - name: Releasing using Hub
-      uses: BruceWind/AndroidScreenShot_SysApi@master
+      uses: ShaunLWM/action-release-debugapk@master
       env:
        GITHUB_TOKEN: ${{ secrets.TOKEN }}
        APP_FOLDER: app
