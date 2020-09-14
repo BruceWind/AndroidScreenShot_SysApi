@@ -1,12 +1,10 @@
 # if gitlab action running occur a error such as 'No toolchains found in the NDK toolchains folder
 # for ABI with prefix: mips64el-linux-android', might you need to change 'distributionUrl' of gradle zip and 'classpath'.
 
-name: Build & Publish Debug APK
+name: Check & Build 
 
 on:
- push:
-  branches:
-   - master
+  [push, pull_request]
    
 jobs:
   build:
@@ -17,6 +15,14 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+
+    - name: Run check style
+      uses: nikitasavinov/checkstyle-action@master
+      with:
+        github_token: ${{ secrets.TOKEN }}
+        reporter: 'github-pr-check'
+        tool_name: 'testtool'
+
     - name: Make Gradle executable
       run: chmod +x ./gradlew
     - name: Build with Gradle
